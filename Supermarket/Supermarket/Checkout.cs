@@ -6,6 +6,17 @@ namespace Supermarket
     public class Checkout
     {
         private readonly ICollection<Item> _scannedItems = new List<Item>();
+        private readonly IEnumerable<MultiBuyOffer> _offers;
+
+        public Checkout()
+        {
+            _offers = new List<MultiBuyOffer>();
+        }
+
+        public Checkout(IEnumerable<MultiBuyOffer> offers)
+        {
+            _offers = offers;
+        }
 
         public void ScanItem(Item item)
         {
@@ -19,7 +30,16 @@ namespace Supermarket
 
         public decimal GetTotalPrice()
         {
-            return _scannedItems.Sum(i => i.UnitPrice);
+            decimal totalPrice = 0;
+            
+            foreach (var offer in _offers)
+            {
+                totalPrice += offer.Apply(_scannedItems);
+            }
+
+            totalPrice += _scannedItems.Where(i => !i.OfferApplied).Sum(i => i.UnitPrice);
+
+            return totalPrice;
         }
     }
 }

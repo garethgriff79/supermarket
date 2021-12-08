@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -104,6 +105,197 @@ namespace Supermarket.Tests
             var totalPrice = checkout.GetTotalPrice();
 
             Assert.AreEqual(2.24M, totalPrice);
+        }
+
+        [TestMethod]
+        public void GetTotalPrice_SingleMultiBuyItemsOnly_ReturnsOfferPrice()
+        {
+            var offers = new List<MultiBuyOffer>
+            {
+                new MultiBuyOffer("A99", 3, 1.3M)
+            };
+
+            var checkout = new Checkout(offers);
+
+            var item = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item2 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item3 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            checkout.ScanItem(item);
+            checkout.ScanItem(item2);
+            checkout.ScanItem(item3);
+
+            var totalPrice = checkout.GetTotalPrice();
+
+            Assert.AreEqual(1.3M, totalPrice);
+        }
+
+        [TestMethod]
+        public void GetTotalPrice_MultiBuyWithOtherItems_ReturnsTotalPriceIncOffer()
+        {
+            var offers = new List<MultiBuyOffer>
+            {
+                new MultiBuyOffer("A99", 3, 1.3M)
+            };
+
+            var checkout = new Checkout(offers);
+
+            var item = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item2 = new Item
+            {
+                Sku = "B15",
+                UnitPrice = 0.3M
+            };
+
+            var item3 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item4 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            checkout.ScanItem(item);
+            checkout.ScanItem(item2);
+            checkout.ScanItem(item3);
+            checkout.ScanItem(item4);
+
+            var totalPrice = checkout.GetTotalPrice();
+
+            Assert.AreEqual(1.6M, totalPrice);
+        }
+
+        [TestMethod]
+        public void GetTotalPrice_MultipleMultiBuyOfferItems_ReturnsAllOfferPrices()
+        {
+            var offers = new List<MultiBuyOffer>
+            {
+                new MultiBuyOffer("A99", 3, 1.3M),
+                new MultiBuyOffer("B15", 2, 0.45M)
+            };
+
+            var checkout = new Checkout(offers);
+
+            var item = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item2 = new Item
+            {
+                Sku = "B15",
+                UnitPrice = 0.3M
+            };
+
+            var item3 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item4 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item5 = new Item
+            {
+                Sku = "B15",
+                UnitPrice = 0.3M
+            };
+
+            checkout.ScanItem(item);
+            checkout.ScanItem(item2);
+            checkout.ScanItem(item3);
+            checkout.ScanItem(item4);
+            checkout.ScanItem(item5);
+
+            var totalPrice = checkout.GetTotalPrice();
+
+            Assert.AreEqual(1.75M, totalPrice);
+        }
+
+        [TestMethod]
+        public void GetTotalPrice_DoubleMultiBuyItemSet_ReturnsOfferAppliedMultipleTimes()
+        {
+            var offers = new List<MultiBuyOffer>
+            {
+                new MultiBuyOffer("A99", 3, 1.3M)
+            };
+
+            var checkout = new Checkout(offers);
+
+            var item = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item2 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item3 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item4 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item5 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            var item6 = new Item
+            {
+                Sku = "A99",
+                UnitPrice = 0.5M
+            };
+
+            checkout.ScanItem(item);
+            checkout.ScanItem(item2);
+            checkout.ScanItem(item3);
+            checkout.ScanItem(item4);
+            checkout.ScanItem(item5);
+            checkout.ScanItem(item6);
+
+            var totalPrice = checkout.GetTotalPrice();
+
+            Assert.AreEqual(2.6M, totalPrice);
         }
     }
 }
