@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Supermarket
 {
@@ -14,6 +15,11 @@ namespace Supermarket
         public ICollection<Item> GetScannedItems()
         {
             return _scannedItems;
+        }
+
+        public decimal GetTotalPrice()
+        {
+            return _scannedItems.Sum(i => i.UnitPrice);
         }
     }
 }
